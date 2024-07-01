@@ -24,11 +24,14 @@ jobs:
       - name: Build extension
         run: npm run build
 
+      - name: Zip extension
+        run: zip -r extension.zip ./path/to/your/extension/files
+
       - name: Upload to Chrome Web Store
-        uses: google-chrome/publish@v1
+        uses: lolopinto/chrome-webstore-upload@v1.0.5
         with:
           client_id: ${{ secrets.CHROME_WEB_STORE_CLIENT_ID }}
           client_secret: ${{ secrets.CHROME_WEB_STORE_CLIENT_SECRET }}
           refresh_token: ${{ secrets.CHROME_WEB_STORE_REFRESH_TOKEN }}
-          app_id: your_chrome_extension_app_id
-          zip: path/to/your/extension.zip
+          extension_id: your_chrome_extension_id
+          zip_file: extension.zip
