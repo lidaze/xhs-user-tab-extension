@@ -1,5 +1,5 @@
 {
   "scripts": {
-    "build": "zip -r extension.zip ./path/to/extension/files"
+    "build": "zip -r extension.zip . -i ./path/to/extension/files"
   }
 }
