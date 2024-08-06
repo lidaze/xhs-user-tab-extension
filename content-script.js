@@ -1,3 +1,4 @@
+const IFRAME_WIDTH_DEFAULT = 400;
 let _userInfoPage = null;
 
 // Insert the div when the page is loaded
@@ -19,14 +20,12 @@ const debouncedHide = _debounce(() => {
 });
 
 const observeModalExist = () => {
-  // console.log("observe");
   const observer = new MutationObserver(() => {
     const element = document.querySelector("#noteContainer");
-    if (element) {
-      // console.log("show");
+
+    if (element && window.outerWidth >= 960) {
       debouncedShow();
     } else {
-      // console.log("hide");
       debouncedHide();
     }
   });
@@ -48,45 +47,57 @@ const setUserInfoPage = (src) => {
 
   // move the noteContainer
   const noteContainer = document.getElementById("noteContainer");
-  if (noteContainer) {
-    const transform = noteContainer.style.transform;
-
-    // const str = "translate(116px, 32px) scale(1)";
-    const regex = /[-+]?\d*\.?\d+(?:px|em|%|rem|vh|vw)?/g;
-    const matches = transform.match(regex);
-
-    // 提取数字部分，去掉单位
-    const [x, y, scale] = matches.map((match) => parseFloat(match));
-
-    noteContainer.style.transform = `translate(${x - 119}px, ${y}px) scale(${scale})`;
-
-    // console.log('Matches:', matches);  // 输出 ["116px", "32px", "1"]
-    // console.log('Numbers:', numbers);  // 输出 [116, 32, 1]
-  }
-
-  // return;
 
   // create container
   _userInfoPage = document.createElement("div");
   _userInfoPage.id = "user-info-page-container";
   _userInfoPage.style.position = "fixed";
   _userInfoPage.style.top = "0";
-  _userInfoPage.style.right = "0px";
+  _userInfoPage.style.right = "-48px";
   _userInfoPage.style.bottom = "0";
-  _userInfoPage.style.width = "336px";
-  _userInfoPage.style.borderRadius = "16px";
+  _userInfoPage.style.width = "40px";
+  _userInfoPage.style.borderRadius = "20px";
   _userInfoPage.style.overflow = "hidden";
-  _userInfoPage.style.transition = "250ms";
-  _userInfoPage.style.zIndex = "-1";
-  _userInfoPage.style.backgroundColor = "#FFDEE9";
-  _userInfoPage.style.backgroundImage = "linear-gradient(0deg, #FFDEE9 0%, #B5FFFC 100%)";
+  _userInfoPage.style.transition = "width 250ms";
+  _userInfoPage.style.zIndex = "1";
+  _userInfoPage.style.pointerEvents = "none";
 
-  // set iframe src
+  // set switch
+  const toggleContent = document.createElement("div");
+  toggleContent.style.position = "absolute";
+  toggleContent.style.top = 0;
+  // toggleContent.style.bottom = 0;
+  toggleContent.style.right = 0;
+  toggleContent.style.width = "40px";
+  toggleContent.style.padding = "24px 0";
+  toggleContent.style.letterSpacing = "4px";
+  toggleContent.style.backgroundColor = "#F7F7F7";
+  toggleContent.style.color = "#333";
+  toggleContent.style.cursor = "pointer";
+  toggleContent.style.writingMode = "vertical-lr";
+  toggleContent.style.textOrientation = "upright";
+  toggleContent.style.fontSize = "16px";
+  toggleContent.style.fontWeight = 500;
+  toggleContent.style.display = "flex";
+  toggleContent.style.justifyContent = "center";
+  toggleContent.style.alignItems = "center";
+  toggleContent.style.borderRadius = "20px";
+  toggleContent.style.userSelect = "none";
+  toggleContent.innerText = "查看博主首页";
+  toggleContent.style.pointerEvents = "all";
+  toggleContent.style.backgroundImage = "linear-gradient(0deg, #FFDEE9 0%, #B5FFFC 100%)";
+  _userInfoPage.appendChild(toggleContent);
+
   const iframe = document.createElement("iframe");
-  iframe.style.width = "100%";
+  iframe.style.position = "absolute";
+  iframe.style.top = 0;
+  iframe.style.right = "48px";
+  iframe.style.width = `${IFRAME_WIDTH_DEFAULT}px`;
   iframe.style.height = "100%";
   iframe.style.border = "none";
+  iframe.style.borderRadius = "0 20px 20px 0";
   iframe.style.opacity = 0;
+  iframe.style.pointerEvents = "all";
   iframe.src = src;
   iframe.onload = handleIframeLoaded;
   iframe.style.transition = "250ms";
@@ -95,14 +106,26 @@ const setUserInfoPage = (src) => {
   _userInfoPage.appendChild(iframe);
   noteContainer.appendChild(_userInfoPage);
 
-  setTimeout(() => {
-    _userInfoPage.style.right = "-342px";
-  }, 0);
+  toggleContent.addEventListener("click", function () {
+    if (_userInfoPage.style.width === "40px") {
+      // how much interaction-container width
+      const interactionWidth =
+        document.querySelector("#noteContainer .interaction-container").clientWidth ||
+        IFRAME_WIDTH_DEFAULT;
+
+      _userInfoPage.style.width = `${interactionWidth + 48}px`;
+      iframe.style.opacity = 1;
+      iframe.style.width = `${interactionWidth}px`;
+      toggleContent.innerText = "隐藏博主首页";
+    } else {
+      _userInfoPage.style.width = "40px";
+      iframe.style.opacity = 0;
+      toggleContent.innerText = "查看博主首页";
+    }
+  });
 
   // iframe onload event
   function handleIframeLoaded() {
-    // return;
-    // console.log("iframe onloaded");
     const content = iframe.contentDocument || iframe.contentWindow.document;
 
     const headerContainer = content.querySelector(".header-container");
@@ -122,6 +145,12 @@ const setUserInfoPage = (src) => {
     }
 
     iframe.style.opacity = 1;
+
+    content.addEventListener("scroll", function () {
+      const stickyDiv = content.querySelector(".reds-sticky");
+      stickyDiv.style.top = 0;
+      stickyDiv.style.position = "relative";
+    });
   }
 };
 
