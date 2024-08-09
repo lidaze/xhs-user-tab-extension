@@ -52,32 +52,36 @@ const setUserInfoPage = (src) => {
   _userInfoPage = document.createElement("div");
   _userInfoPage.id = "user-info-page-container";
   _userInfoPage.style.position = "fixed";
-  _userInfoPage.style.top = "0";
+  _userInfoPage.style.top = 0;
   _userInfoPage.style.right = "-48px";
-  _userInfoPage.style.bottom = "0";
+  _userInfoPage.style.bottom = 0;
   _userInfoPage.style.width = "40px";
   _userInfoPage.style.borderRadius = "20px";
   _userInfoPage.style.overflow = "hidden";
   _userInfoPage.style.transition = "width 250ms";
   _userInfoPage.style.zIndex = "1";
   _userInfoPage.style.pointerEvents = "none";
+  // _userInfoPage.style.border = "1px solid rgb(228, 228, 228)";
+  // _userInfoPage.style.boxShadow = "0 0 50px -12px rgb(0 0 0 / 45%)";
+  // _userInfoPage.style.backgroundImage =
+  //   "linear-gradient(250deg, rgb(255, 222, 233) 0%, rgb(181, 255, 252) 100%)";
 
   // set switch
   const toggleContent = document.createElement("div");
   toggleContent.style.position = "absolute";
   toggleContent.style.top = 0;
   // toggleContent.style.bottom = 0;
+  toggleContent.style.padding = "24px 0";
   toggleContent.style.right = 0;
   toggleContent.style.width = "40px";
-  toggleContent.style.padding = "24px 0";
   toggleContent.style.letterSpacing = "4px";
-  toggleContent.style.backgroundColor = "#F7F7F7";
+  // toggleContent.style.backgroundColor = "#F7F7F7";
   toggleContent.style.color = "#333";
   toggleContent.style.cursor = "pointer";
   toggleContent.style.writingMode = "vertical-lr";
   toggleContent.style.textOrientation = "upright";
   toggleContent.style.fontSize = "16px";
-  toggleContent.style.fontWeight = 500;
+  toggleContent.style.fontWeight = 600;
   toggleContent.style.display = "flex";
   toggleContent.style.justifyContent = "center";
   toggleContent.style.alignItems = "center";
@@ -86,6 +90,8 @@ const setUserInfoPage = (src) => {
   toggleContent.innerText = "查看博主首页";
   toggleContent.style.pointerEvents = "all";
   toggleContent.style.backgroundImage = "linear-gradient(0deg, #FFDEE9 0%, #B5FFFC 100%)";
+  // toggleContent.style.boxShadow = "4px 0 14px -1px rgba(0, 0, 0, 0.6)";
+  // toggleContent.style.zIndex = 1;
   _userInfoPage.appendChild(toggleContent);
 
   const iframe = document.createElement("iframe");
@@ -98,6 +104,7 @@ const setUserInfoPage = (src) => {
   iframe.style.borderRadius = "0 20px 20px 0";
   iframe.style.opacity = 0;
   iframe.style.pointerEvents = "all";
+  // iframe.style.boxShadow = "rgb(0 0 0 / 20%) 4px 0px 16px -2px";
   iframe.src = src;
   iframe.onload = handleIframeLoaded;
   iframe.style.transition = "250ms";
@@ -106,7 +113,10 @@ const setUserInfoPage = (src) => {
   _userInfoPage.appendChild(iframe);
   noteContainer.appendChild(_userInfoPage);
 
-  toggleContent.addEventListener("click", function () {
+  toggleContent.addEventListener("mouseover", toggleIFrame);
+  toggleContent.addEventListener("click", toggleIFrame);
+
+  function toggleIFrame() {
     if (_userInfoPage.style.width === "40px") {
       // how much interaction-container width
       const interactionWidth =
@@ -114,15 +124,17 @@ const setUserInfoPage = (src) => {
         IFRAME_WIDTH_DEFAULT;
 
       _userInfoPage.style.width = `${interactionWidth + 48}px`;
+      _userInfoPage.style.borderRadius = "0px 20px 20px 0px";
       iframe.style.opacity = 1;
       iframe.style.width = `${interactionWidth}px`;
       toggleContent.innerText = "隐藏博主首页";
     } else {
       _userInfoPage.style.width = "40px";
+      _userInfoPage.style.borderRadius = "20px";
       iframe.style.opacity = 0;
       toggleContent.innerText = "查看博主首页";
     }
-  });
+  }
 
   // iframe onload event
   function handleIframeLoaded() {
