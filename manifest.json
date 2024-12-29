@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "小红书 - 同步开启博主首页",
-  "version": "1.5",
+  "version": "1.6",
   "description": "当你在浏览博主内容时候，右侧同步显示该博主主页，避免打开新的Tab页面",
   "permissions": [],
   "content_scripts": [

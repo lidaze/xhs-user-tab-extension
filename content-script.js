@@ -1,4 +1,5 @@
 const IFRAME_WIDTH_DEFAULT = 400;
+const IFRAME_WIDTH_DEFAULT_2 = 330;
 let _userInfoPage = null;
 
 // Insert the div when the page is loaded
@@ -48,19 +49,35 @@ const setUserInfoPage = (src) => {
   // move the noteContainer
   const noteContainer = document.getElementById("noteContainer");
 
+  // modal的宽度大小，和屏幕的宽度大小，来决定是否可以分开展示
+  console.log(parseInt(noteContainer.style.width), window.innerWidth);
+
+  const modalWidth = parseInt(noteContainer.style.width);
+  const windowWidth = window.innerWidth;
+
+  let mode = "content";
+  if ((windowWidth - modalWidth) / 2 > IFRAME_WIDTH_DEFAULT_2) {
+    mode = "right";
+  }
+
   // create container
   _userInfoPage = document.createElement("div");
   _userInfoPage.id = "user-info-page-container";
   _userInfoPage.style.position = "fixed";
-  _userInfoPage.style.top = 0;
-  _userInfoPage.style.right = "-48px";
-  _userInfoPage.style.bottom = 0;
-  _userInfoPage.style.width = "40px";
   _userInfoPage.style.borderRadius = "20px";
   _userInfoPage.style.overflow = "hidden";
   _userInfoPage.style.transition = "width 250ms";
   _userInfoPage.style.zIndex = "1";
   _userInfoPage.style.pointerEvents = "none";
+  _userInfoPage.style.top = 0;
+  if (mode === "right") {
+    _userInfoPage.style.left = `${modalWidth + 8}px`;
+  } else {
+    _userInfoPage.style.right = "-48px";
+  }
+  _userInfoPage.style.bottom = 0;
+  _userInfoPage.style.width = "40px";
+
   // _userInfoPage.style.border = "1px solid rgb(228, 228, 228)";
   // _userInfoPage.style.boxShadow = "0 0 50px -12px rgb(0 0 0 / 45%)";
   // _userInfoPage.style.backgroundImage =
@@ -72,7 +89,11 @@ const setUserInfoPage = (src) => {
   toggleContent.style.top = 0;
   // toggleContent.style.bottom = 0;
   toggleContent.style.padding = "24px 0";
-  toggleContent.style.right = 0;
+  if (mode === "right") {
+    toggleContent.style.left = 0;
+  } else {
+    toggleContent.style.right = 0;
+  }
   toggleContent.style.width = "40px";
   toggleContent.style.letterSpacing = "4px";
   // toggleContent.style.backgroundColor = "#F7F7F7";
@@ -97,11 +118,18 @@ const setUserInfoPage = (src) => {
   const iframe = document.createElement("iframe");
   iframe.style.position = "absolute";
   iframe.style.top = 0;
-  iframe.style.right = "48px";
-  iframe.style.width = `${IFRAME_WIDTH_DEFAULT}px`;
+  if (mode === "right") {
+    iframe.style.left = "48px";
+    iframe.style.width = `${IFRAME_WIDTH_DEFAULT_2}px`;
+    iframe.style.borderRadius = "20px";
+  } else {
+    iframe.style.right = "48px";
+    iframe.style.width = `${IFRAME_WIDTH_DEFAULT}px`;
+    iframe.style.borderRadius = "0 20px 20px 0";
+  }
   iframe.style.height = "100%";
   iframe.style.border = "none";
-  iframe.style.borderRadius = "0 20px 20px 0";
+
   iframe.style.opacity = 0;
   iframe.style.pointerEvents = "all";
   // iframe.style.boxShadow = "rgb(0 0 0 / 20%) 4px 0px 16px -2px";
@@ -123,10 +151,12 @@ const setUserInfoPage = (src) => {
         document.querySelector("#noteContainer .interaction-container").clientWidth ||
         IFRAME_WIDTH_DEFAULT;
 
-      _userInfoPage.style.width = `${interactionWidth + 48}px`;
+      const iFW = mode === "right" ? IFRAME_WIDTH_DEFAULT_2 : interactionWidth;
+
+      _userInfoPage.style.width = `${iFW + 48}px`;
       _userInfoPage.style.borderRadius = "0px 20px 20px 0px";
       iframe.style.opacity = 1;
-      iframe.style.width = `${interactionWidth}px`;
+      iframe.style.width = `${iFW}px`;
       toggleContent.innerText = "隐藏博主首页";
     } else {
       _userInfoPage.style.width = "40px";
